@@ -6,11 +6,14 @@ import optimizers
 import numpy as np
 import nnfs
 from nnfs.datasets import spiral_data
+from sklearn import datasets
 
 nnfs.init()
 
 
 if __name__ == "__main__":
+    EPOCHS = 10001
+    LEARNING_RATE = 0.1
 
     X = np.array([[1, 2, 3, 2.5],
                   [2.0, 5.0, -1.0, 2.0],
@@ -22,6 +25,10 @@ if __name__ == "__main__":
 
     X, y = spiral_data(samples=100, classes=3)
 
+    iris = datasets.load_iris()
+    X = iris.data[:, :2]  # we only take the first two features.
+    y = iris.target
+
     d1 = layers.Dense(2, 64)
     r1 = activations.ReLU()
     d2 = layers.Dense(64, 128)
@@ -32,9 +39,9 @@ if __name__ == "__main__":
     s1 = activations.Softmax()
 
     loss_function = losses.CategoricalCrossentropy()
-    optimizer = optimizers.SGD(learning_rate=0.1)
+    optimizer = optimizers.SGD(learning_rate=LEARNING_RATE)
 
-    for epoch in range(10001):
+    for epoch in range(EPOCHS):
         x = d1.forward(X)
         x = r1.forward(x)
         x = d2.forward(x)
@@ -54,7 +61,7 @@ if __name__ == "__main__":
         accuracy = np.mean(predictions==y)
 
         if epoch % 100 == 0:
-            print(f'epoch: {epoch} || accuracy: {accuracy:.3f} || loss: {loss:.3f}')
+            print(f'epoch: {epoch}/{EPOCHS} || accuracy: {accuracy:.3f} || loss: {loss:.3f}')
 
         grad = loss_function.backward(output, y)
         grad = s1.backward(grad)

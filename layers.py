@@ -16,9 +16,9 @@ class Layer(ABC):
     def backward(self, d_inputs):
         raise NotImplementedError()
 
-    #@abstractmethod
-    #def structure(self):
-        #raise NotImplementedError()
+    @abstractmethod
+    def get_details(self):
+        raise NotImplementedError()
 
 
 class Dense(Layer):
@@ -30,9 +30,10 @@ class Dense(Layer):
         self._inputs = None
         self._weights = 0.1 * np.random.randn(self.input_size, self.n_neurons)
         self._biases = np.zeros((1, n_neurons))
+        self._d_inputs = None
         self._d_weights = None
         self._d_biases = None
-        self._d_inputs = None
+
 
     @property
     def inputs(self):

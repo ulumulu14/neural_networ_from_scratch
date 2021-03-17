@@ -31,8 +31,8 @@ class ReLU(layers.Layer):
 
     def forward(self, inputs):
         self.inputs = inputs
-        output = np.maximum(0, self.inputs)
-        return output
+
+        return np.maximum(0, self.inputs)
 
     def backward(self, gradient):
         # gradient argument is gradient of next layer
