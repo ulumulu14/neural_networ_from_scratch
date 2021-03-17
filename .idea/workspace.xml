@@ -23,6 +23,7 @@
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
+        <option value="ulumulu14 &lt;arekk949@gmail.com&gt;" />
         <option value="Arek Kaus" />
       </list>
     </option>
@@ -120,10 +121,10 @@
     <option name="LAST_COMMIT_MESSAGE" value="Added gradient to ReLU and Dense layers" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="997" y="139" key="CommitChangelistDialog2" timestamp="1615991990813">
+    <state x="997" y="139" key="CommitChangelistDialog2" timestamp="1615996670644">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="997" y="139" key="CommitChangelistDialog2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1615991990813" />
+    <state x="997" y="139" key="CommitChangelistDialog2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1615996670644" />
     <state x="739" y="263" key="FileChooserDialogImpl" timestamp="1615989779536">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
