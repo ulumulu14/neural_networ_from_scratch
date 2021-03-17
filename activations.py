@@ -5,7 +5,7 @@ import layers
 class ReLU(layers.Layer):
 
     def __init__(self):
-        super().__init__()
+        super(ReLU, self).__init__()
         self._inputs = None
         self._d_inputs = None
 
@@ -49,7 +49,7 @@ class ReLU(layers.Layer):
 class Softmax(layers.Layer):
 
     def __init__(self):
-        super().__init__()
+        super(Softmax, self).__init__()
         self._inputs = None
         self._d_inputs = None
         self._output = None

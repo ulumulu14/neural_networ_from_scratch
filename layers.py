@@ -23,11 +23,12 @@ class Layer(ABC):
 
 class Dense(Layer):
 
-    def __init__(self, n_neurons: int, name=None):
-        super().__init__(name)
+    def __init__(self, input_size : int, n_neurons: int, name=None):
+        super(Dense, self).__init__(name)
         self.n_neurons = n_neurons
+        self.input_size = input_size
         self._inputs = None
-        self._weights = None
+        self._weights = 0.1 * np.random.randn(self.input_size, self.n_neurons)
         self._biases = np.zeros((1, n_neurons))
         self._d_weights = None
         self._d_biases = None
@@ -95,7 +96,6 @@ class Dense(Layer):
 
     def forward(self, inputs):
         self.inputs = np.array(inputs)
-        self.weights = 0.1 * np.random.randn(len(inputs[0]), self.n_neurons)
 
         return np.dot(self.inputs, self.weights) + self.biases
 
@@ -103,7 +103,7 @@ class Dense(Layer):
         # gradient argument is gradient of next layer
 
         # Gradient w.r.t weights and biases
-        self.d_weights = np.dot(self.inputs, gradient)
+        self.d_weights = np.dot(self.inputs.T, gradient)
         self.d_biases = np.sum(gradient, axis=0, keepdims=True)
         # Gradient w.r.t inputs
         self.d_inputs = np.dot(gradient, self.weights.T)
