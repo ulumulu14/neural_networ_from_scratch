@@ -6,13 +6,33 @@ class ReLU(layers.Layer):
 
     def __init__(self):
         super().__init__()
-        self.inputs = None
-        self.d_inputs = None
+        self._inputs = None
+        self._d_inputs = None
+
+    @property
+    def inputs(self):
+        if self._inputs is None:
+            raise Exception('inputs is None')
+        return self._inputs
+
+    @property
+    def d_inputs(self):
+        if self._d_inputs is None:
+            raise Exception('d_inputs is None')
+        return self._d_inputs
+
+    @inputs.setter
+    def inputs(self, inputs):
+        self._inputs = inputs
+
+    @d_inputs.setter
+    def d_inputs(self, d_inputs):
+        self._d_inputs = d_inputs
 
     def forward(self, inputs):
         self.inputs = inputs
-
-        return np.maximum(0, inputs)
+        output = np.maximum(0, self.inputs)
+        return output
 
     def backward(self, gradient):
         # gradient argument is gradient of next layer
@@ -30,9 +50,39 @@ class Softmax(layers.Layer):
 
     def __init__(self):
         super().__init__()
-        self.inputs = None
-        self.d_inputs = None
-        self.output = None
+        self._inputs = None
+        self._d_inputs = None
+        self._output = None
+
+    @property
+    def inputs(self):
+        if self._inputs is None:
+            raise Exception('inputs is None')
+        return self._inputs
+
+    @property
+    def d_inputs(self):
+        if self._d_inputs is None:
+            raise Exception('d_inputs is None')
+        return self._d_inputs
+
+    @property
+    def output(self):
+        if self._output is None:
+            raise Exception('outputs is None')
+        return self._output
+
+    @inputs.setter
+    def inputs(self, inputs):
+        self._inputs = inputs
+
+    @d_inputs.setter
+    def d_inputs(self, d_inputs):
+        self._d_inputs = d_inputs
+
+    @output.setter
+    def output(self, output):
+        self._output = output
 
     def forward(self, inputs):
         self.inputs = inputs

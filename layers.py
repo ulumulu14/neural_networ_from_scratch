@@ -26,12 +26,72 @@ class Dense(Layer):
     def __init__(self, n_neurons: int, name=None):
         super().__init__(name)
         self.n_neurons = n_neurons
-        self.inputs = None
-        self.weights = None
-        self.biases = np.zeros((1, n_neurons))
-        self.d_weights = None
-        self.d_biases = None
-        self.d_inputs = None
+        self._inputs = None
+        self._weights = None
+        self._biases = np.zeros((1, n_neurons))
+        self._d_weights = None
+        self._d_biases = None
+        self._d_inputs = None
+
+    @property
+    def inputs(self):
+        if self._inputs is None:
+            raise Exception('inputs is None')
+        return self._inputs
+
+    @property
+    def weights(self):
+        if self._weights is None:
+            raise Exception('weights is None')
+        return self._weights
+
+    @property
+    def biases(self):
+        if self._biases is None:
+            raise Exception('biases is None')
+        return self._biases
+
+    @property
+    def d_inputs(self):
+        if self._d_inputs is None:
+            raise Exception('d_inputs is None')
+        return self._d_inputs
+
+    @property
+    def d_weights(self):
+        if self._d_weights is None:
+            raise Exception('d_weights is None')
+        return self._d_weights
+
+    @property
+    def d_biases(self):
+        if self._d_biases is None:
+            raise Exception('d_biases is None')
+        return self._d_biases
+
+    @inputs.setter
+    def inputs(self, inputs):
+        self._inputs = inputs
+
+    @weights.setter
+    def weights(self, weights):
+        self._weights = weights
+
+    @biases.setter
+    def biases(self, biases):
+        self._biases = biases
+
+    @d_inputs.setter
+    def d_inputs(self, d_inputs):
+        self._d_inputs = d_inputs
+
+    @d_weights.setter
+    def d_weights(self, d_weights):
+        self._d_weights = d_weights
+
+    @d_biases.setter
+    def d_biases(self, d_biases):
+        self._d_biases = d_biases
 
     def forward(self, inputs):
         self.inputs = np.array(inputs)
@@ -47,6 +107,8 @@ class Dense(Layer):
         self.d_biases = np.sum(gradient, axis=0, keepdims=True)
         # Gradient w.r.t inputs
         self.d_inputs = np.dot(gradient, self.weights.T)
+
+        return self.d_inputs
 
     def get_details(self):
         return f'Name: {self.name} || Type: Dense || Output Size: {self.n_neurons}\n'

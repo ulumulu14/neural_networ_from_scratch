@@ -5,7 +5,7 @@ import losses
 import numpy as np
 
 if __name__ == "__main__":
-    '''''
+
     X = np.array([[1, 2, 3, 2.5],
                   [2.0, 5.0, -1.0, 2.0],
                   [-1.5, 2.7, 3.3, -0.8]])
@@ -58,3 +58,4 @@ if __name__ == "__main__":
     loss_grad = loss.backward(softmax_output, class_targets)
     softmax_grad = activation.backward(loss_grad)
     print(softmax_grad)
+    '''''

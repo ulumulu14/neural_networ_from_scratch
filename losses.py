@@ -3,7 +3,7 @@ import layers
 #from abc import abstractmethod
 
 
-class Loss():
+class Loss:
 
     def calculate(self, y_pred, y_true):
         return np.mean(self.forward(y_pred, y_true))
@@ -26,7 +26,7 @@ class CategoricalCrossentropy(Loss):
         elif len(y_true.shape) == 2:
             confidences = np.sum(y_pred * y_true)
         else:
-            raise Exception('y shape should be 1 or 2')
+            raise Exception('Wrong y shape')
 
         return -np.log(confidences)
 
