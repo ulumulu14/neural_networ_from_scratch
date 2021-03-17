@@ -5,6 +5,7 @@ import losses
 import numpy as np
 
 if __name__ == "__main__":
+    '''''
     X = np.array([[1, 2, 3, 2.5],
                   [2.0, 5.0, -1.0, 2.0],
                   [-1.5, 2.7, 3.3, -0.8]])
@@ -12,18 +13,9 @@ if __name__ == "__main__":
     y = [[1, 0, 0],
          [0, 1, 0],
          [0, 0, 1]]
-    '''
-    print(X)
-    layer1 = DenseLayer(4, "linear")
-    layer1.read_input(X)
-    output1 = layer1.forward()
-    print(output1)
+    
 
-    layer2 = DenseLayer(4, "relu")
-    layer2.read_input(output1)
-    output2 = layer1.forward()
-    print(output2)
-    '''
+
 
     nn = network.NeuralNetwork()
 
@@ -34,11 +26,12 @@ if __name__ == "__main__":
 
     y_pred = nn.fit(X, None, None, None)
 
-    loss_function = losses.CategoricalCrossEntropy()
+    loss_function = losses.CategoricalCrossentropy()
     loss = loss_function.calculate(y_pred, y)
-    print(f'loss: {loss}')
+
     print(y_pred)
     print(nn.structure())
+    print(f'loss: {loss}')
     #nn.add_layer(5, "relu")
     #nn.add_layer(2, "linear")
     #nn.add_layer(5, "relu")
@@ -52,3 +45,16 @@ if __name__ == "__main__":
 
 
     #print(output)
+    '''''
+    # Test
+    softmax_output = np.array([[0.7, 0.1, 0.2],
+                               [0.1, 0.5, 0.4],
+                               [0.02, 0.9, 0.08]])
+    class_targets = np.array([0, 1, 1])
+
+    activation = activations.Softmax()
+    activation.output = softmax_output
+    loss = losses.CategoricalCrossentropy()
+    loss_grad = loss.backward(softmax_output, class_targets)
+    softmax_grad = activation.backward(loss_grad)
+    print(softmax_grad)

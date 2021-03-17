@@ -9,7 +9,7 @@ class Loss():
         return np.mean(self.forward(y_pred, y_true))
 
 
-class CategoricalCrossEntropy(Loss):
+class CategoricalCrossentropy(Loss):
 
     def forward(self, y_pred, y_true):
         y_pred = np.array(y_pred)
