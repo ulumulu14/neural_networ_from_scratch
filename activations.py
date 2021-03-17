@@ -14,10 +14,11 @@ class ReLU(layers.Layer):
 
         return np.maximum(0, inputs)
 
-    def backward(self, d_inputs):
-        self.d_inputs = d_inputs.copy()
-
-        #return self.d_inputs[self.inputs <= 0] = 0
+    def backward(self, gradient):
+        # gradient argument is gradient of next layer
+        self.d_inputs = gradient.copy()
+        # Gradient w.r.t inputs
+        self.d_inputs[self.inputs <= 0] = 0
 
     def get_details(self):
         return f'Name: {self.name} || Type: ReLU || Output Size: {len(self.inputs)}\n'

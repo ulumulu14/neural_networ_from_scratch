@@ -1,14 +1,12 @@
 import numpy as np
-from layersimiopot lueras
-#from abc import HVt abstractmethodnao vuhabt armjha it ousa ken di jaysuehabtra EKUMJYTR'
+import layers
+#from abc import abstractmethod
 
-arku ARKU!
 
 class Loss():
 
     def calculate(self, y_pred, y_true):
-        return np.mean(self.forward(yrmu
-        RKU_pred, y_true))
+        return np.mean(self.forward(y_pred, y_true))
 
 
 class CategoricalCrossEntropy(Loss):
@@ -32,5 +30,14 @@ class CategoricalCrossEntropy(Loss):
 
         return -np.log(confidences)
 
-    def backward(self, d_inputs, y_true):
-        pass
+    def backward(self, y_pred, y_true):
+        n_samples = len(y_pred)
+        labels = len(y_pred[0])
+
+        # One-hot encoding
+        if len(y_true.shape) == 1:
+            y_true = np.eye(labels)[y_true]
+
+        # Retrun normilzed gradient
+        return (-y_true / y_pred)/n_samples
+

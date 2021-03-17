@@ -39,9 +39,14 @@ class Dense(Layer):
 
         return np.dot(self.inputs, self.weights) + self.biases
 
-    def backward(self, d_inputs):
-        self.d_inputs = d_inputs
-        pass
+    def backward(self, gradient):
+        # gradient argument is gradient of next layer
+
+        # Gradient w.r.t weights and biases
+        self.d_weights = np.dot(self.inputs, gradient)
+        self.d_biases = np.sum(gradient, axis=0, keepdims=True)
+        # Gradient w.r.t inputs
+        self.d_inputs = np.dot(gradient, self.weights.T)
 
     def get_details(self):
         return f'Name: {self.name} || Type: Dense || Output Size: {self.n_neurons}\n'
