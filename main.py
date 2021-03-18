@@ -39,7 +39,8 @@ if __name__ == "__main__":
     s1 = activations.Softmax()
 
     loss_function = losses.CategoricalCrossentropy()
-    optimizer = optimizers.SGD(learning_rate=LEARNING_RATE, decay=0.001, momentum=0.5)
+    #optimizer = optimizers.SGD(learning_rate=LEARNING_RATE, decay=0.0001, momentum=0.9)
+    optimizer = optimizers.AdaGrad(learning_rate=LEARNING_RATE, decay=0.0001)
 
     for epoch in range(EPOCHS):
         x = d1.forward(X)
@@ -64,6 +65,7 @@ if __name__ == "__main__":
         grad = d2.backward(grad)
         grad = r1.backward(grad)
         grad = d1.backward(grad)
+
 
         optimizer.update_params(d1)
         optimizer.update_params(d2)

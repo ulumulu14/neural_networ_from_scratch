@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class SGD:
 
     def __init__(self, learning_rate=1., decay=0, momentum=0):
@@ -18,60 +19,61 @@ class SGD:
 
     def update_params(self, layer):
         # Momentum is parameters change from previous iteration * self._momentum
+        # Used to prevent stopping in loss function's local minimum
         if self._momentum:
             if layer.weights_momentums is None:
                 layer.weights_momentums = np.zeros_like(layer.weights)
                 layer.biases_momentums = np.zeros_like(layer.biases)
 
-            weights_updates = self._momentum * layer.weights_momentums - self._current_learning_rate * layer.d_weights
+            weights_updates = self._momentum*layer.weights_momentums - self._current_learning_rate*layer.d_weights
             layer.weight_momentums = weights_updates
-            biases_updates = self._momentum * layer.biases_momentums - self._current_learning_rate * layer.d_biases
+            biases_updates = self._momentum*layer.biases_momentums - self._current_learning_rate*layer.d_biases
             layer.biases_momentums = biases_updates
         else:
             weights_updates = -self._current_learning_rate * layer.d_weights
-            biases_updates = self._current_learning_rate * layer.d_biases
+            biases_updates = -self._current_learning_rate * layer.d_biases
 
         layer.weights += weights_updates
         layer.biases += biases_updates
 
     def update_learning_rate(self):
+        # Call after updating parameters of all layers
         if self._decay:
-            self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
+            self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay*self._iteration))
 
         self._iteration += 1
 
 
 class AdaGrad:
 
-    def __init__(self, learning_rate=1., decay=0, momentum=0):
+    def __init__(self, learning_rate=1., decay=0, epsilon=0.0000001):
         if learning_rate < 0.:
             raise ValueError('Learning rate cant be less than 0')
         if decay < 0.:
             raise ValueError('Decay cant be less than 0')
-        if momentum < 0.:
-            raise ValueError('Momentum cant be less than 0')
+        if epsilon <= 0:
+            raise ValueError('Epsilon cant be lower or equal to 0')
 
         self._learning_rate = float(learning_rate)
         self._current_learning_rate = float(learning_rate)
         self._decay = decay
         self._iteration = 0
-        self._momentum = momentum
+        self._epsilon = epsilon  # To prevent dividing by 0
 
     def update_params(self, layer):
-        # Momentum is parameters change from previous iteration * self._momentum
-        if self._momentum:
-            weights_updates = self._momentum * layer.weights_momentums - self._current_learning_rate * layer.d_weights
-            layer.weight_momentums = weights_updates
-            biases_updates = self._momentum * layer.biases_momentums - self._current_learning_rate * layer.d_biases
-            layer.biases_momentums = biases_updates
-        else:
-            weights_updates = -self._current_learning_rate * layer.d_weights
-            biases_updates = self._current_learning_rate * layer.d_biases
+        # Parameter change is lowered by previous gradients
+        if layer.d_weights_history is None:
+            layer.d_weights_history = np.zeros_like(layer.weights)
+            layer.d_biases_history = np.zeros_like(layer.biases)
 
-        layer.weights += weights_updates
-        layer.biases += biases_updates
+        layer.d_weights_history += layer.d_weights**2
+        layer.d_biases_history += layer.d_biases**2
+
+        layer.weights -= self._current_learning_rate * layer.d_weights / (np.sqrt(layer.d_weights_history)+self._epsilon)
+        layer.biases -= self._current_learning_rate * layer.d_biases / (np.sqrt(layer.d_biases_history)+self._epsilon)
 
     def update_learning_rate(self):
+        # Call after updating parameters of all layers
         if self._decay:
             self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
 

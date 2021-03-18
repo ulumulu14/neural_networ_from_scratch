@@ -38,13 +38,16 @@ class Dense(Layer):
         self.input_size = input_size
         self.weights = 0.1 * np.random.randn(input_size, n_neurons)
         self.biases = np.zeros((1, n_neurons))
-        self.weights_momentums = None
-        self.biases_momentums = None
-        self.
         self._inputs = None
         self._d_inputs = None
         self._d_weights = None
         self._d_biases = None
+        # For SGD with momentum
+        self.weights_momentums = None
+        self.biases_momentums = None
+        # For AdaGrad, holds previous gradients squared
+        self.d_weights_history = None
+        self.d_biases_history = None
 
     @property
     def inputs(self):

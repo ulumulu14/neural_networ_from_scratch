@@ -32,6 +32,7 @@ class CategoricalCrossentropy(Loss):
     def backward(self, y_pred, y_true):
         n_samples = len(y_pred)
         labels = len(y_pred[0])
+        #y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
 
         # One-hot encoding
         if len(y_true.shape) == 1:
