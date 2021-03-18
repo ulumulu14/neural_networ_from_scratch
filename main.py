@@ -13,7 +13,7 @@ nnfs.init()
 
 if __name__ == "__main__":
     EPOCHS = 10001
-    LEARNING_RATE = 0.1
+    LEARNING_RATE = 1
 
     X = np.array([[1, 2, 3, 2.5],
                   [2.0, 5.0, -1.0, 2.0],
@@ -25,11 +25,11 @@ if __name__ == "__main__":
 
     X, y = spiral_data(samples=100, classes=3)
 
-    iris = datasets.load_iris()
-    X = iris.data[:, :2]  # we only take the first two features.
-    y = iris.target
+    #iris = datasets.load_iris()
+    #X = iris.data[:, :2]
+    #y = iris.target
 
-    d1 = layers.Dense(2, 64)
+    d1 = layers.Dense(2, 64, name='Dense1')
     r1 = activations.ReLU()
     d2 = layers.Dense(64, 128)
     r2 = activations.ReLU()
@@ -39,16 +39,12 @@ if __name__ == "__main__":
     s1 = activations.Softmax()
 
     loss_function = losses.CategoricalCrossentropy()
-    optimizer = optimizers.SGD(learning_rate=LEARNING_RATE)
+    optimizer = optimizers.SGD(learning_rate=LEARNING_RATE, decay=0.001, momentum=0.5)
 
     for epoch in range(EPOCHS):
         x = d1.forward(X)
         x = r1.forward(x)
         x = d2.forward(x)
-        x = r2.forward(x)
-        x = d3.forward(x)
-        x = r3.forward(x)
-        x = d4.forward(x)
         output = s1.forward(x)
 
         loss = loss_function.calculate(output, y)
@@ -61,22 +57,17 @@ if __name__ == "__main__":
         accuracy = np.mean(predictions==y)
 
         if epoch % 100 == 0:
-            print(f'epoch: {epoch}/{EPOCHS} || accuracy: {accuracy:.3f} || loss: {loss:.3f}')
+            print(f'epoch: {epoch}/{EPOCHS} || accuracy: {accuracy:.3f} || loss: {loss:.3f} || lr: {optimizer._current_learning_rate}')
 
         grad = loss_function.backward(output, y)
         grad = s1.backward(grad)
-        grad = d4.backward(grad)
-        grad = r3.backward(grad)
-        grad = d3.backward(grad)
-        grad = r2.backward(grad)
         grad = d2.backward(grad)
         grad = r1.backward(grad)
         grad = d1.backward(grad)
 
         optimizer.update_params(d1)
         optimizer.update_params(d2)
-        optimizer.update_params(d3)
-        optimizer.update_params(d4)
+        optimizer.update_learning_rate()
 
 '''''
     nn = network.NeuralNetwork()

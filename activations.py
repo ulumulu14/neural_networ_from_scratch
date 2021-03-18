@@ -12,14 +12,14 @@ class ReLU(layers.Layer):
     @property
     def inputs(self):
         if self._inputs is None:
-            raise Exception('inputs is None')
+            raise ValueError('inputs is None')
 
         return self._inputs
 
     @property
     def d_inputs(self):
         if self._d_inputs is None:
-            raise Exception('d_inputs is None')
+            raise ValueError('d_inputs is None')
 
         return self._d_inputs
 
@@ -59,21 +59,21 @@ class Softmax(layers.Layer):
     @property
     def inputs(self):
         if self._inputs is None:
-            raise Exception('inputs is None')
+            raise ValueError('inputs is None')
 
         return self._inputs
 
     @property
     def d_inputs(self):
         if self._d_inputs is None:
-            raise Exception('d_inputs is None')
+            raise ValueError('d_inputs is None')
 
         return self._d_inputs
 
     @property
     def output(self):
         if self._output is None:
-            raise Exception('output is None')
+            raise ValueError('output is None')
 
         return self._output
 

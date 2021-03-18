@@ -23,12 +23,24 @@ class Layer(ABC):
 
 class Dense(Layer):
 
-    def __init__(self, input_size : int, n_neurons: int, name=None):
+    def __init__(self, input_size, n_neurons, name=None):
+        if not isinstance(input_size, int):
+            raise TypeError('Input size must be an integer')
+        if not isinstance(n_neurons, int):
+            raise TypeError('Number of neurons must be an integer')
+        if n_neurons <= 0:
+            raise ValueError('Number of neurons cant be less or equal to 0')
+        if input_size <= 0:
+            raise ValueError('Input size cant be less or equal to 0')
+
         super(Dense, self).__init__(name)
         self.n_neurons = n_neurons
         self.input_size = input_size
         self.weights = 0.1 * np.random.randn(input_size, n_neurons)
         self.biases = np.zeros((1, n_neurons))
+        self.weights_momentums = None
+        self.biases_momentums = None
+        self.
         self._inputs = None
         self._d_inputs = None
         self._d_weights = None
@@ -38,6 +50,7 @@ class Dense(Layer):
     def inputs(self):
         if self._inputs is None:
             raise ValueError('inputs is None')
+
         return self._inputs
 
     @property
@@ -50,12 +63,14 @@ class Dense(Layer):
     def d_weights(self):
         if self._d_weights is None:
             raise ValueError('d_weights is None')
+
         return self._d_weights
 
     @property
     def d_biases(self):
         if self._d_biases is None:
             raise ValueError('d_biases is None')
+
         return self._d_biases
 
     @inputs.setter

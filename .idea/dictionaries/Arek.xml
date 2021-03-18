@@ -4,6 +4,7 @@
       <w>crossentropy</w>
       <w>deriv</w>
       <w>jacobian</w>
+      <w>momentums</w>
       <w>softmax</w>
     </words>
   </dictionary>
