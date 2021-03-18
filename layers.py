@@ -27,61 +27,40 @@ class Dense(Layer):
         super(Dense, self).__init__(name)
         self.n_neurons = n_neurons
         self.input_size = input_size
+        self.weights = 0.1 * np.random.randn(input_size, n_neurons)
+        self.biases = np.zeros((1, n_neurons))
         self._inputs = None
-        self._weights = 0.1 * np.random.randn(self.input_size, self.n_neurons)
-        self._biases = np.zeros((1, n_neurons))
         self._d_inputs = None
         self._d_weights = None
         self._d_biases = None
 
-
     @property
     def inputs(self):
         if self._inputs is None:
-            raise Exception('inputs is None')
+            raise ValueError('inputs is None')
         return self._inputs
-
-    @property
-    def weights(self):
-        if self._weights is None:
-            raise Exception('weights is None')
-        return self._weights
-
-    @property
-    def biases(self):
-        if self._biases is None:
-            raise Exception('biases is None')
-        return self._biases
 
     @property
     def d_inputs(self):
         if self._d_inputs is None:
-            raise Exception('d_inputs is None')
+            raise ValueError('d_inputs is None')
         return self._d_inputs
 
     @property
     def d_weights(self):
         if self._d_weights is None:
-            raise Exception('d_weights is None')
+            raise ValueError('d_weights is None')
         return self._d_weights
 
     @property
     def d_biases(self):
         if self._d_biases is None:
-            raise Exception('d_biases is None')
+            raise ValueError('d_biases is None')
         return self._d_biases
 
     @inputs.setter
     def inputs(self, inputs):
         self._inputs = inputs
-
-    @weights.setter
-    def weights(self, weights):
-        self._weights = weights
-
-    @biases.setter
-    def biases(self, biases):
-        self._biases = biases
 
     @d_inputs.setter
     def d_inputs(self, d_inputs):

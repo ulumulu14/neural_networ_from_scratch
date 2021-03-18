@@ -78,8 +78,6 @@ if __name__ == "__main__":
         optimizer.update_params(d3)
         optimizer.update_params(d4)
 
-
-
 '''''
     nn = network.NeuralNetwork()
 

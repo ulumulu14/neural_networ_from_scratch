@@ -1,6 +1,5 @@
 import numpy as np
 import layers
-#from abc import abstractmethod
 
 
 class Loss:
@@ -38,6 +37,6 @@ class CategoricalCrossentropy(Loss):
         if len(y_true.shape) == 1:
             y_true = np.eye(labels)[y_true]
 
-        # Retrun normilzed gradient
+        # Return normalized gradient
         return (-y_true / y_pred)/n_samples
 
