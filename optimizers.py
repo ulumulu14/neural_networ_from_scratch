@@ -62,7 +62,7 @@ class AdaGrad:
         self._epsilon = float(epsilon)  # To prevent dividing by 0
 
     def update_params(self, layer):
-        # Weights and biases change is lowered by previous gradients, normalizes changes
+        # Weights and biases change is lowered by previous gradients, normalizes changes (per weight adaptive learning rate)
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
@@ -90,6 +90,8 @@ class RMSProp:
             raise ValueError('Decay cant be less than 0')
         if epsilon <= 0:
             raise ValueError('Epsilon cant be lower or equal to 0')
+        if rho < 0.:
+            raise ValueError('Rho cant be lower than 0')
 
         self._learning_rate = float(learning_rate)
         self._current_learning_rate = float(learning_rate)
@@ -99,7 +101,7 @@ class RMSProp:
         self._rho = float(rho)
 
     def update_params(self, layer):
-        # Weights and biases change is lowered by previous gradients, normalizes changes
+        # Weights and biases change is lowered by previous gradients, normalizes changes (per weight adaptive learning rate)
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
@@ -136,7 +138,7 @@ class Adam:
         self._rho = float(rho)
 
     def update_params(self, layer):
-        # Parameter change is lowered by previous gradients, normilizes weight changes
+        # Parameter change is lowered by previous gradients, normilizes weight changes (per weight adaptive learning rate)
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
