@@ -37,7 +37,8 @@ if __name__ == "__main__":
     #loss_function = losses.CategoricalCrossentropy()
     #optimizer = optimizers.SGD(learning_rate=LEARNING_RATE, decay=0.001, momentum=0.9)
     #optimizer = optimizers.AdaGrad(learning_rate=LEARNING_RATE, decay=0.0001)
-    optimizer = optimizers.RMSProp(learning_rate=LEARNING_RATE, decay=0.0001, rho=0.999)
+    #optimizer = optimizers.RMSProp(learning_rate=LEARNING_RATE, decay=0.0001, rho=0.999)
+    optimizer = optimizers.Adam(learning_rate=LEARNING_RATE, decay=0.00001)
 
     for epoch in range(EPOCHS):
         x = d1.forward(X)
