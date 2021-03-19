@@ -3,7 +3,7 @@ import numpy as np
 
 class SGD:
 
-    def __init__(self, learning_rate=1., decay=0, momentum=0):
+    def __init__(self, learning_rate=0.001, decay=0, momentum=0):
         if learning_rate < 0.:
             raise ValueError('Learning rate cant be less than 0')
         if decay < 0.:
@@ -24,6 +24,7 @@ class SGD:
             if layer.weights_momentums is None:
                 layer.weights_momentums = np.zeros_like(layer.weights)
                 layer.biases_momentums = np.zeros_like(layer.biases)
+            #print(layer.weights_momentums)
 
             weights_updates = self._momentum*layer.weights_momentums - self._current_learning_rate*layer.d_weights
             layer.weight_momentums = weights_updates
@@ -46,7 +47,7 @@ class SGD:
 
 class AdaGrad:
 
-    def __init__(self, learning_rate=1., decay=0, epsilon=0.0000001):
+    def __init__(self, learning_rate=0.001, decay=0, epsilon=0.0000001):
         if learning_rate < 0.:
             raise ValueError('Learning rate cant be less than 0')
         if decay < 0.:
@@ -56,12 +57,12 @@ class AdaGrad:
 
         self._learning_rate = float(learning_rate)
         self._current_learning_rate = float(learning_rate)
-        self._decay = decay
+        self._decay = float(decay)
         self._iteration = 0
-        self._epsilon = epsilon  # To prevent dividing by 0
+        self._epsilon = float(epsilon)  # To prevent dividing by 0
 
     def update_params(self, layer):
-        # Parameter change is lowered by previous gradients
+        # Weights and biases change is lowered by previous gradients, normalizes changes
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
@@ -78,3 +79,78 @@ class AdaGrad:
             self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
 
         self._iteration += 1
+
+
+class RMSProp:
+
+    def __init__(self, learning_rate=0.001, decay=0, epsilon=0.0000001, rho=0.9):
+        if learning_rate < 0.:
+            raise ValueError('Learning rate cant be less than 0')
+        if decay < 0.:
+            raise ValueError('Decay cant be less than 0')
+        if epsilon <= 0:
+            raise ValueError('Epsilon cant be lower or equal to 0')
+
+        self._learning_rate = float(learning_rate)
+        self._current_learning_rate = float(learning_rate)
+        self._decay = float(decay)
+        self._iteration = 0
+        self._epsilon = float(epsilon)  # To prevent dividing by 0
+        self._rho = float(rho)
+
+    def update_params(self, layer):
+        # Weights and biases change is lowered by previous gradients, normalizes changes
+        if layer.d_weights_history is None:
+            layer.d_weights_history = np.zeros_like(layer.weights)
+            layer.d_biases_history = np.zeros_like(layer.biases)
+
+        layer.d_weights_history = self._rho * layer.d_weights_history + (1-self._rho) * layer.d_weights**2
+        layer.d_biases_history = self._rho * layer.d_biases_history + (1-self._rho) * layer.d_biases**2
+
+        layer.weights -= self._current_learning_rate * layer.d_weights / (np.sqrt(layer.d_weights_history)+self._epsilon)
+        layer.biases -= self._current_learning_rate * layer.d_biases / (np.sqrt(layer.d_biases_history)+self._epsilon)
+
+    def update_learning_rate(self):
+        # Call after updating parameters of all layers
+        if self._decay:
+            self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
+
+        self._iteration += 1
+
+
+class Adam:
+
+    def __init__(self, learning_rate=0.001, decay=0, epsilon=0.0000001, rho=0.9):
+        if learning_rate < 0.:
+            raise ValueError('Learning rate cant be less than 0')
+        if decay < 0.:
+            raise ValueError('Decay cant be less than 0')
+        if epsilon <= 0:
+            raise ValueError('Epsilon cant be lower or equal to 0')
+
+        self._learning_rate = float(learning_rate)
+        self._current_learning_rate = float(learning_rate)
+        self._decay = float(decay)
+        self._iteration = 0
+        self._epsilon = float(epsilon)  # To prevent dividing by 0
+        self._rho = float(rho)
+
+    def update_params(self, layer):
+        # Parameter change is lowered by previous gradients, normilizes weight changes
+        if layer.d_weights_history is None:
+            layer.d_weights_history = np.zeros_like(layer.weights)
+            layer.d_biases_history = np.zeros_like(layer.biases)
+
+        layer.d_weights_history = self._rho * layer.d_weights_history + (1-self._rho) * layer.d_weights**2
+        layer.d_biases_history = self._rho * layer.d_biases_history + (1-self._rho) * layer.d_biases**2
+
+        layer.weights -= self._current_learning_rate * layer.d_weights / (np.sqrt(layer.d_weights_history)+self._epsilon)
+        layer.biases -= self._current_learning_rate * layer.d_biases / (np.sqrt(layer.d_biases_history)+self._epsilon)
+
+    def update_learning_rate(self):
+        # Call after updating parameters of all layers
+        if self._decay:
+            self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
+
+        self._iteration += 1
+

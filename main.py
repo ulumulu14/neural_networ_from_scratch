@@ -13,7 +13,7 @@ nnfs.init()
 
 if __name__ == "__main__":
     EPOCHS = 10001
-    LEARNING_RATE = 1
+    LEARNING_RATE = 0.02
 
     X = np.array([[1, 2, 3, 2.5],
                   [2.0, 5.0, -1.0, 2.0],
@@ -31,37 +31,37 @@ if __name__ == "__main__":
 
     d1 = layers.Dense(2, 64, name='Dense1')
     r1 = activations.ReLU()
-    d2 = layers.Dense(64, 128)
-    r2 = activations.ReLU()
-    d3 = layers.Dense(128, 64)
-    r3 = activations.ReLU()
-    d4 = layers.Dense(64, 3)
-    s1 = activations.Softmax()
-
-    loss_function = losses.CategoricalCrossentropy()
-    #optimizer = optimizers.SGD(learning_rate=LEARNING_RATE, decay=0.0001, momentum=0.9)
-    optimizer = optimizers.AdaGrad(learning_rate=LEARNING_RATE, decay=0.0001)
+    d2 = layers.Dense(64, 3)
+    #s1 = activations.Softmax()
+    loss_activation = losses.Softmax_CategoricalCrossentropy()
+    #loss_function = losses.CategoricalCrossentropy()
+    #optimizer = optimizers.SGD(learning_rate=LEARNING_RATE, decay=0.001, momentum=0.9)
+    #optimizer = optimizers.AdaGrad(learning_rate=LEARNING_RATE, decay=0.0001)
+    optimizer = optimizers.RMSProp(learning_rate=LEARNING_RATE, decay=0.0001, rho=0.999)
 
     for epoch in range(EPOCHS):
         x = d1.forward(X)
         x = r1.forward(x)
         x = d2.forward(x)
-        output = s1.forward(x)
+        #output = s1.forward(x)
+        loss = loss_activation.forward(x, y)
+        #loss = loss_function.calculate(output, y)
 
-        loss = loss_function.calculate(output, y)
-
-        predictions = np.argmax(output, axis=1)
+        predictions = np.argmax(loss_activation.output, axis=1)
+        #predictions = np.argmax(output, axis=1)
 
         if len(y.shape) == 2:
             y = np.argmax(y, axis=1)
 
         accuracy = np.mean(predictions==y)
 
+
         if epoch % 100 == 0:
             print(f'epoch: {epoch}/{EPOCHS} || accuracy: {accuracy:.3f} || loss: {loss:.3f} || lr: {optimizer._current_learning_rate}')
 
-        grad = loss_function.backward(output, y)
-        grad = s1.backward(grad)
+        #grad = loss_function.backward(output, y)
+        grad = loss_activation.backward(loss_activation.output, y)
+        #grad = s1.backward(grad)
         grad = d2.backward(grad)
         grad = r1.backward(grad)
         grad = d1.backward(grad)
