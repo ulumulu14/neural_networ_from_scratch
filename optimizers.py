@@ -130,18 +130,23 @@ class Adam:
             raise ValueError('Decay cant be less than 0')
         if epsilon <= 0.:
             raise ValueError('Epsilon cant be lower or equal to 0')
+        if beta1 < 0.:
+            raise ValueError('beta1 cant be lower than 0')
+        if beta2 < 0.:
+            raise ValueError('beta2 cant be lower than 0')
 
         self._learning_rate = float(learning_rate)
         self._current_learning_rate = float(learning_rate)
         self._decay = float(decay)
         self._iteration = 0
         self._epsilon = float(epsilon)  # To prevent dividing by 0
-        self._beta1 = beta1
-        self._beta2 = beta2
+        self._beta1 = float(beta1)
+        self._beta2 = float(beta2)
 
     def update_params(self, layer):
         # Weights and biases change is lowered by previous gradients,
         # this normalizes weight changes (per weight adaptive learning rate)
+        # betas compensate initial zeroed values of momentums and history of weights and biases
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
@@ -149,8 +154,8 @@ class Adam:
             layer.biases_momentums = np.zeros_like(layer.biases)
 
         layer.weights_momentums = self._beta1 * layer.weights_momentums + (1+self._beta1) * layer.d_weights
-        layer.biases_momentums = self._beta1 * layer.biases_momentums + (1 + self._beta1) * layer.d_biases
-
+        layer.biases_momentums = self._beta1 * layer.biases_momentums + (1+self._beta1) * layer.d_biases
+        print(layer.weights_momentums)
         weights_momentums_corrected = layer.weights_momentums / (1 - self._beta1**(self._iteration+1))
         biases_momentums_corrected = layer.biases_momentums / (1 - self._beta1**(self._iteration+1))
 
@@ -158,9 +163,9 @@ class Adam:
         layer.d_biases_history = self._beta2 * layer.d_biases_history + (1-self._beta2) * layer.d_biases**2
 
         layer.d_weights_history_corrected = layer.d_weights_history / (1 - self._beta2**(self._iteration+1))
-        layer.d_biases_history_corrected = layer.d_biases_history / (1 - self._beta2 ** (self._iteration+1))
+        layer.d_biases_history_corrected = layer.d_biases_history / (1 - self._beta2**(self._iteration+1))
 
-        print(weights_momentums_corrected)
+        #print(weights_momentums_corrected)
         layer.weights -= self._current_learning_rate * weights_momentums_corrected / \
                          (np.sqrt(weights_momentums_corrected)+self._epsilon)
         layer.biases -= self._current_learning_rate * biases_momentums_corrected / \
