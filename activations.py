@@ -116,15 +116,51 @@ class Sigmoid(layers.Layer):
 
     def __init__(self):
         super().__init__()
-        self.inputs = None
-        self.d_inputs = None
+        self._inputs = None
+        self._d_inputs = None
+        self._output = None
+
+    @property
+    def inputs(self):
+        if self._inputs is None:
+            raise ValueError('inputs is None')
+
+        return self._inputs
+
+    @property
+    def d_inputs(self):
+        if self._d_inputs is None:
+            raise ValueError('d_inputs is None')
+
+        return self._d_inputs
+
+    @property
+    def output(self):
+        if self._output is None:
+            raise ValueError('output is None')
+
+        return self._output
+
+    @inputs.setter
+    def inputs(self, inputs):
+        self._inputs = inputs
+
+    @d_inputs.setter
+    def d_inputs(self, d_inputs):
+        self._d_inputs = d_inputs
+
+    @output.setter
+    def output(self, output):
+        self._output = output
 
     def forward(self, inputs):
-        self.inputs = inputs
-        return 1 / (1 + np.exp(-inputs))
+        self._inputs = inputs
+        return 1 / (1 + np.exp(-self._inputs))
 
-    def backward(self, d_inputs):
-        self.d_inputs = d_inputs.copy()
+    def backward(self, gradient):
+        self.d_inputs = gradient * (1-self.output) * self.output
+
+        return self.d_inputs
 
     def get_details(self):
         return f'Name: {self.name} || Type: Sigmoid || Output Size: {len(self.inputs)}\n'

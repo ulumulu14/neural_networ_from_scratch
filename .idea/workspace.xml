@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5a07d68-29f7-446c-807d-905676514929" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/activations.py" beforeDir="false" afterPath="$PROJECT_DIR$/activations.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/layers.py" beforeDir="false" afterPath="$PROJECT_DIR$/layers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/losses.py" beforeDir="false" afterPath="$PROJECT_DIR$/losses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,7 +222,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616697026661</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Dropout layer added">
+      <created>1616712587593</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1616712587593</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -243,13 +248,14 @@
     <MESSAGE value="Added Adam (nie działa xD)" />
     <MESSAGE value="Validation set" />
     <MESSAGE value="L1 and L2 regularization added" />
-    <option name="LAST_COMMIT_MESSAGE" value="L1 and L2 regularization added" />
+    <MESSAGE value="Dropout layer added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dropout layer added" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="997" y="139" key="CommitChangelistDialog2" timestamp="1616697018104">
+    <state x="997" y="139" key="CommitChangelistDialog2" timestamp="1616712585162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="997" y="139" key="CommitChangelistDialog2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1616697018104" />
+    <state x="997" y="139" key="CommitChangelistDialog2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1616712585162" />
     <state x="739" y="263" key="FileChooserDialogImpl" timestamp="1615989779536">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -290,10 +296,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="163" key="SettingsEditor/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1616003525330" />
-    <state x="552" y="254" key="Vcs.Push.Dialog.v2" timestamp="1616697031175">
+    <state x="552" y="254" key="Vcs.Push.Dialog.v2" timestamp="1616712589159">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="254" key="Vcs.Push.Dialog.v2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1616697031175" />
+    <state x="552" y="254" key="Vcs.Push.Dialog.v2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1616712589159" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1615989792487">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

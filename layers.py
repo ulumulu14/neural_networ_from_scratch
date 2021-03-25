@@ -165,4 +165,4 @@ class Dropout(Layer):
         return d_inputs * self._binary_mask
 
     def get_details(self):
-        return f'Name: {self.name} || Type: Dense || Output Size: {self._inputs.shape}\n'
+        return f'Name: {self.name} || Type: Dense || Output Size: {len(self._inputs)}\n'
