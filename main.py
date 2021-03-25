@@ -29,9 +29,10 @@ if __name__ == "__main__":
     #X = iris.data[:, :2]
     #y = iris.target
 
-    d1 = layers.Dense(2, 64, weight_regularizer_l2=0.0005, bias_regularizer_l2=0.0005)
-    r1 = activations.ReLU()
-    d2 = layers.Dense(64, 3)
+    dense1 = layers.Dense(2, 512, weight_regularizer_l2=0.0005, bias_regularizer_l2=0.0005)
+    relu1 = activations.ReLU()
+    dropout1 = layers.Dropout(0.1)
+    dense2 = layers.Dense(512, 3)
     #s1 = activations.Softmax()
     loss_activation = losses.Softmax_CategoricalCrossentropy()
     #loss_function = losses.CategoricalCrossentropy()
@@ -41,9 +42,10 @@ if __name__ == "__main__":
     #optimizer = optimizers.Adam(learning_rate=LEARNING_RATE, decay=0.00001)
 
     for epoch in range(EPOCHS):
-        x = d1.forward(X)
-        x = r1.forward(x)
-        x = d2.forward(x)
+        x = dense1.forward(X)
+        x = relu1.forward(x)
+        x = dropout1.forward(x)
+        x = dense2.forward(x)
         #output = s1.forward(x)
         loss = loss_activation.forward(x, y)
         #loss = loss_function.calculate(output, y)
@@ -54,8 +56,7 @@ if __name__ == "__main__":
         if len(y.shape) == 2:
             y = np.argmax(y, axis=1)
 
-        accuracy = np.mean(predictions==y)
-
+        accuracy = np.mean(predictions == y)
 
         if epoch % 100 == 0:
             print(f'epoch: {epoch}/{EPOCHS} || accuracy: {accuracy:.3f} || loss: {loss:.3f}')
@@ -63,20 +64,22 @@ if __name__ == "__main__":
         #grad = loss_function.backward(output, y)
         grad = loss_activation.backward(loss_activation.output, y)
         #grad = s1.backward(grad)
-        grad = d2.backward(grad)
-        grad = r1.backward(grad)
-        grad = d1.backward(grad)
+
+        grad = dense2.backward(grad)
+        grad = dropout1.backward(grad)
+        grad = relu1.backward(grad)
+        grad = dense1.backward(grad)
 
 
-        optimizer.update_params(d1)
-        optimizer.update_params(d2)
+        optimizer.update_params(dense1)
+        optimizer.update_params(dense2)
         optimizer.update_learning_rate()
 
     X_test, y_test = spiral_data(samples=100, classes=3)
 
-    x = d1.forward(X_test)
-    x = r1.forward(x)
-    x = d2.forward(x)
+    x = dense1.forward(X_test)
+    x = relu1.forward(x)
+    x = dense2.forward(x)
     val_loss = loss_activation.forward(x, y_test)
 
     predictions = np.argmax(loss_activation.output, axis=1)

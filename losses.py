@@ -9,6 +9,8 @@ class Loss:
         return np.mean(self.forward(y_pred, y_true))
 
     def regularization_loss(self, layer):
+        # L1 and L2 regularizations are penalty for big weights and biases added to loss
+        # It make model generalize better
         regularization_loss = 0
 
         if layer.weight_regularizer_l1 > 0:

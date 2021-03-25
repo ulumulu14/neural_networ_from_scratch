@@ -142,3 +142,27 @@ class Dense(Layer):
 
     def get_details(self):
         return f'Name: {self.name} || Type: Dense || Output Size: {self.n_neurons}\n'
+
+
+class Dropout(Layer):
+
+    def __init__(self, rate, name=None):
+        if 0 > rate > 1:
+            raise ValueError('Rate value must be (0, 1)')
+
+        super(Dropout, self).__init__(name)
+        self._rate = 1 - rate
+        self._inputs = None
+        self._binary_mask = None
+
+    def forward(self, inputs):
+        self._inputs = inputs
+        self._binary_mask = np.random.binomial(1, self._rate, size=self._inputs.shape) / self._rate
+
+        return self._inputs * self._binary_mask
+
+    def backward(self, d_inputs):
+        return d_inputs * self._binary_mask
+
+    def get_details(self):
+        return f'Name: {self.name} || Type: Dense || Output Size: {self._inputs.shape}\n'
