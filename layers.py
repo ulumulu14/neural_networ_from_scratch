@@ -23,7 +23,8 @@ class Layer(ABC):
 
 class Dense(Layer):
 
-    def __init__(self, input_size, n_neurons, name=None):
+    def __init__(self, input_size, n_neurons, name=None, weight_regularizer_l1=0, bias_regularizer_l1=0,
+                 weight_regularizer_l2=0, bias_regularizer_l2=0):
         if not isinstance(input_size, int):
             raise TypeError('Input size must be an integer')
         if not isinstance(n_neurons, int):
@@ -32,6 +33,14 @@ class Dense(Layer):
             raise ValueError('Number of neurons cant be less or equal to 0')
         if input_size <= 0:
             raise ValueError('Input size cant be less or equal to 0')
+        if weight_regularizer_l1 < 0:
+            raise ValueError('Weight regularizer l1 cant be less than 0')
+        if bias_regularizer_l1 < 0:
+            raise ValueError('Bias regularizer l1 cant be less than 0')
+        if weight_regularizer_l2 < 0:
+            raise ValueError('Weight regularizer l2 cant be less than 0')
+        if bias_regularizer_l2 < 0:
+            raise ValueError('Bias regularizer l2 cant be less than 0')
 
         super(Dense, self).__init__(name)
         self.n_neurons = n_neurons
@@ -48,6 +57,11 @@ class Dense(Layer):
         # For AdaGrad, RMSProp, holds previous gradients squared
         self.d_weights_history = None
         self.d_biases_history = None
+        # Regularization parameters
+        self.weight_regularizer_l1 = weight_regularizer_l1
+        self.bias_regularizer_l1 = bias_regularizer_l1
+        self.weight_regularizer_l2 = weight_regularizer_l2
+        self.bias_regularizer_l2 = bias_regularizer_l2
 
     @property
     def inputs(self):
@@ -103,6 +117,24 @@ class Dense(Layer):
         # Gradient w.r.t weights and biases
         self.d_weights = np.dot(self.inputs.T, gradient)
         self.d_biases = np.sum(gradient, axis=0, keepdims=True)
+
+        # Gradients on regularization
+        if self.weight_regularizer_l1 > 0:
+            d_l1 = np.ones_like(self.weights)
+            d_l1[self.weights < 0] = -1
+            self._d_weights += self.weight_regularizer_l1 * d_l1
+
+        if self.bias_regularizer_l1 > 0:
+            d_l1 = np.ones_like(self.biases)
+            d_l1[self.biases < 0] = -1
+            self.d_biases += self.bias_regularizer_l1 * d_l1
+
+        if self.weight_regularizer_l2 > 0:
+            self.d_weights += 2 * self.weight_regularizer_l2 * self.weights
+
+        if self.bias_regularizer_l2 > 0:
+            self.d_biases += 2 * self.bias_regularizer_l2 * self.biases
+
         # Gradient w.r.t inputs
         self.d_inputs = np.dot(gradient, self.weights.T)
 

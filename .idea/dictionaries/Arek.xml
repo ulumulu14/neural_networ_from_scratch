@@ -5,6 +5,7 @@
       <w>deriv</w>
       <w>jacobian</w>
       <w>momentums</w>
+      <w>regularizer</w>
       <w>softmax</w>
     </words>
   </dictionary>

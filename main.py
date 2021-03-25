@@ -23,13 +23,13 @@ if __name__ == "__main__":
     #              [0, 1, 0],
     #              [0, 0, 1]])
 
-    X, y = spiral_data(samples=100, classes=3)
+    X, y = spiral_data(samples=1000, classes=3)
 
     #iris = datasets.load_iris()
     #X = iris.data[:, :2]
     #y = iris.target
 
-    d1 = layers.Dense(2, 64, name='Dense1')
+    d1 = layers.Dense(2, 64, weight_regularizer_l2=0.0005, bias_regularizer_l2=0.0005)
     r1 = activations.ReLU()
     d2 = layers.Dense(64, 3)
     #s1 = activations.Softmax()

@@ -8,6 +8,23 @@ class Loss:
     def calculate(self, y_pred, y_true):
         return np.mean(self.forward(y_pred, y_true))
 
+    def regularization_loss(self, layer):
+        regularization_loss = 0
+
+        if layer.weight_regularizer_l1 > 0:
+            regularization_loss += layer.weight_regularizer_l1 * np.sum(np.abs(layer.weights))
+
+        if layer.bias_regularizer_l1 > 0:
+            regularization_loss += layer.bias_regularizer_l1 * np.sum(np.abs(layer.biases))
+
+        if layer.weight_regularizer_l2 > 0:
+            regularization_loss += layer.weight_regularizer_l2 * np.sum(layer.weights*layer.weights)
+
+        if layer.bias_regularizer_l2 > 0:
+            regularization_loss += layer.bias_regularizer_l2 * np.sum(layer.biases*layer.biases)
+
+        return regularization_loss
+
 
 class CategoricalCrossentropy(Loss):
 
@@ -43,11 +60,12 @@ class CategoricalCrossentropy(Loss):
         return (-y_true / y_pred)/n_samples
 
 
-class Softmax_CategoricalCrossentropy():
-    #Softmax and CategoricalCrossentropy combined for optimization
+class Softmax_CategoricalCrossentropy:
+    #Softmax and CategoricalCrossentropy combined for optimization purposes
     def __init__(self):
         self.activation = activations.Softmax()
         self.loss = CategoricalCrossentropy()
+        self._d_inputs = None
 
     def forward(self, inputs, y_true):
         self.output = self.activation.forward(inputs)
@@ -60,8 +78,8 @@ class Softmax_CategoricalCrossentropy():
         if len(y_true.shape) == 2:
             y_true = np.argmax(y_true, axis=1)
 
-        self.d_inputs = d_values.copy()
-        self.d_inputs[range(samples), y_true] -= 1
-        self.d_inputs = self.d_inputs / samples
+        self._d_inputs = d_values.copy()
+        self._d_inputs[range(samples), y_true] -= 1
+        self._d_inputs = self._d_inputs / samples
 
-        return self.d_inputs
+        return self._d_inputs
