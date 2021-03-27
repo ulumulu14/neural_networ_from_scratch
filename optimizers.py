@@ -165,7 +165,6 @@ class Adam:
         layer.d_weights_history_corrected = layer.d_weights_history / (1 - self._beta2**(self._iteration+1))
         layer.d_biases_history_corrected = layer.d_biases_history / (1 - self._beta2**(self._iteration+1))
 
-        #print(weights_momentums_corrected)
         layer.weights -= self._current_learning_rate * weights_momentums_corrected / \
                          (np.sqrt(weights_momentums_corrected)+self._epsilon)
         layer.biases -= self._current_learning_rate * biases_momentums_corrected / \

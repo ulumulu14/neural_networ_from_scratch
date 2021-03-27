@@ -1,37 +1,29 @@
-import layers
-
-
-class NeuralNetwork():
+class NeuralNetwork:
 
     def __init__(self):
-        self.data = None
-        self.layers = []
+        self._loss_func = None
+        self._optimizer = None
+        self._layers = []
 
     def add_layer(self, layer):
-        self.layers.append(layer)
+        self._layers.append(layer)
 
-    def fit(self, X, y, learning_rate, iterations):
-        self.data = X
-        inputs = self.data
+    def set(self, *, loss, optimizier):
+        self._loss_func = loss
+        self._optimizer = optimizier
 
-        ###for i in range(iterations):
+    def fit(self, X, y, learning_rate, epochs):
+        inputs = X
 
-        for layer in self.layers:
-            inputs = layer.forward(inputs)
+        for epoch in range(0, epochs):
+            for layer in self.layers:
+                inputs = layer.forward(inputs)
 
-        outputs = inputs
+            loss = loss_activation.forward(x, y)
+            outputs = inputs
 
-
-            #reverse_inputs = outputs
-
-            #for layer in reversed(self.layers):
-             #   reverse_inputs = layer.backward(y, reverse_inputs, learning_rate)
-
-            #for layer in self.layers:
-             #   layer.read_input(inputs)
-              #  inputs = layer.forward()
-
-            #outputs = inputs
+            if epoch % 100 == 0:
+                print(f'epoch: {epoch}/{EPOCHS} || accuracy: {accuracy:.3f} || loss: {loss:.3f}')
 
         return outputs
 
@@ -39,13 +31,3 @@ class NeuralNetwork():
         for i, layer in enumerate(self.layers):
             print(f"Layer {i + 1}")
             print(layer.get_details())
-
-    def gradient_descent(self):
-        pass
-
-    def stochastic_gradient_descent(self):
-        pass
-
-    def adam(self):
-        pass
-

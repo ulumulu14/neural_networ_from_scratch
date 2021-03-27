@@ -30,6 +30,9 @@ class Loss:
 
 class CategoricalCrossentropy(Loss):
 
+    def __init__(self):
+        self._d_inputs = None
+
     def forward(self, y_pred, y_true):
         y_pred = np.array(y_pred)
         y_true = np.array(y_true)
@@ -50,9 +53,24 @@ class CategoricalCrossentropy(Loss):
         return -np.log(confidences)
 
     def backward(self, y_pred, y_true):
+        samples = len(y_pred)
+
+        if len(y_true.shape) == 2:
+            y_true = np.argmax(y_true, axis=1)
+
+        self._d_inputs = y_pred.copy()
+        self._d_inputs[range(samples), y_true] -= 1
+        self._d_inputs = self._d_inputs / samples
+
+        return self._d_inputs
+
+    '''''
+    def backward(self, y_pred, y_true):
+        
         n_samples = len(y_pred)
         labels = len(y_pred[0])
         #y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
+        
 
         # One-hot encoding
         if len(y_true.shape) == 1:
@@ -60,7 +78,7 @@ class CategoricalCrossentropy(Loss):
 
         # Return normalized gradient
         return (-y_true / y_pred)/n_samples
-
+        '''''
 
 class Softmax_CategoricalCrossentropy:
     #Softmax and CategoricalCrossentropy combined for optimization purposes
