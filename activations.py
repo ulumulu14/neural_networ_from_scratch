@@ -154,8 +154,9 @@ class Sigmoid(layers.Layer):
         self._output = output
 
     def forward(self, inputs):
-        self._inputs = inputs
-        return 1 / (1 + np.exp(-self._inputs))
+        self.inputs = inputs
+        self.output = 1 / (1 + np.exp(-self._inputs))
+        return self.output
 
     def backward(self, gradient):
         self.d_inputs = gradient * (1-self.output) * self.output

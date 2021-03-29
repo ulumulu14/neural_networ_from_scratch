@@ -138,20 +138,22 @@ class Adam:
             layer.weights_momentums = np.zeros_like(layer.weights)
             layer.biases_momentums = np.zeros_like(layer.biases)
 
-        layer.weights_momentums = self._beta1 * layer.weights_momentums + (1 - self._beta1) * layer.d_weights
-        layer.biases_momentums = self._beta1 * layer.biases_momentums + (1 - self._beta1) * layer.d_biases
+        layer.weights_momentums = self._beta1 * layer.weights_momentums + (1-self._beta1) * layer.d_weights
+        layer.biases_momentums = self._beta1 * layer.biases_momentums + (1-self._beta1) * layer.d_biases
 
-        weight_momentums_corrected = layer.weights_momentums / (1 - self._beta1 ** (self._iteration+1))
-        bias_momentums_corrected = layer.biases_momentums / (1 - self._beta1 ** (self._iteration+1))
+        weight_momentums_corrected = layer.weights_momentums / (1-self._beta1 ** (self._iteration+1))
+        bias_momentums_corrected = layer.biases_momentums / (1-self._beta1 ** (self._iteration+1))
 
-        layer.d_weights_history = self._beta2 * layer.d_weights_history + (1 - self._beta2) * layer.d_weights**2
-        layer.d_biases_history = self._beta2 * layer.d_biases_history + (1 - self._beta2) * layer.d_biases**2
+        layer.d_weights_history = self._beta2 * layer.d_weights_history + (1-self._beta2) * layer.d_weights**2
+        layer.d_biases_history = self._beta2 * layer.d_biases_history + (1-self._beta2) * layer.d_biases**2
 
         d_weight_history_corrected = layer.d_weights_history / (1 - self._beta2 ** (self._iteration+1))
         d_bias_history_corrected = layer.d_biases_history / (1 - self._beta2 ** (self._iteration+1))
 
-        layer.weights += -self._current_learning_rate * weight_momentums_corrected / (np.sqrt(d_weight_history_corrected) + self._epsilon)
-        layer.biases += -self._current_learning_rate * bias_momentums_corrected / (np.sqrt(d_bias_history_corrected) + self._epsilon)
+        layer.weights += -self._current_learning_rate * weight_momentums_corrected / \
+                         (np.sqrt(d_weight_history_corrected) + self._epsilon)
+        layer.biases += -self._current_learning_rate * bias_momentums_corrected / \
+                        (np.sqrt(d_bias_history_corrected) + self._epsilon)
 
     def update_learning_rate(self):
         # Call after updating parameters of all layers
