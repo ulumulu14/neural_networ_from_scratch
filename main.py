@@ -18,7 +18,7 @@ if __name__ == "__main__":
     X, y = spiral_data(samples=100, classes=2)
 
     y = y.reshape(-1, 1)
-    #iris = datasets.load_iris()
+    iris = datasets.load_iris()
     #X = iris.data[:, :2]
     #y = iris.target
 

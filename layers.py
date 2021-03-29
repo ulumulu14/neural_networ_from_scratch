@@ -42,7 +42,7 @@ class Dense(Layer):
         if bias_regularizer_l2 < 0:
             raise ValueError('Bias regularizer l2 cant be less than 0')
 
-        super(Dense, self).__init__(name)
+        super(Dense, self).__init__(name=name)
         self.n_neurons = n_neurons
         self.input_size = input_size
         self.weights = 0.1 * np.random.randn(input_size, n_neurons)
@@ -150,7 +150,7 @@ class Dropout(Layer):
         if 0 > rate > 1:
             raise ValueError('Rate value must be (0, 1)')
 
-        super(Dropout, self).__init__(name)
+        super(Dropout, self).__init__(name=name)
         self._rate = 1 - rate
         self._inputs = None
         self._binary_mask = None

@@ -4,8 +4,8 @@ import layers
 
 class ReLU(layers.Layer):
 
-    def __init__(self):
-        super(ReLU, self).__init__()
+    def __init__(self, name):
+        super(ReLU, self).__init__(name=name)
         self._inputs = None
         self._d_inputs = None
 
@@ -50,8 +50,8 @@ class ReLU(layers.Layer):
 
 class Softmax(layers.Layer):
 
-    def __init__(self):
-        super(Softmax, self).__init__()
+    def __init__(self, name):
+        super(Softmax, self).__init__(name=name)
         self._inputs = None
         self._d_inputs = None
         self._output = None
@@ -114,8 +114,8 @@ class Softmax(layers.Layer):
 
 class Sigmoid(layers.Layer):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name=None):
+        super().__init__(name=name)
         self._inputs = None
         self._d_inputs = None
         self._output = None
@@ -159,9 +159,66 @@ class Sigmoid(layers.Layer):
         return self.output
 
     def backward(self, gradient):
+        # gradient argument is gradient of next layer
         self.d_inputs = gradient * (1-self.output) * self.output
 
         return self.d_inputs
 
     def get_details(self):
         return f'Name: {self.name} || Type: Sigmoid || Output Size: {len(self.inputs)}\n'
+
+
+class Linear(layers.Layer):
+
+    def __init__(self, name):
+        super().__init__(name=name)
+        self._inputs = None
+        self._d_inputs = None
+        self._output = None
+
+    @property
+    def inputs(self):
+        if self._inputs is None:
+            raise ValueError('inputs is None')
+
+        return self._inputs
+
+    @property
+    def d_inputs(self):
+        if self._d_inputs is None:
+            raise ValueError('d_inputs is None')
+
+        return self._d_inputs
+
+    @property
+    def output(self):
+        if self._output is None:
+            raise ValueError('output is None')
+
+        return self._output
+
+    @inputs.setter
+    def inputs(self, inputs):
+        self._inputs = inputs
+
+    @d_inputs.setter
+    def d_inputs(self, d_inputs):
+        self._d_inputs = d_inputs
+
+    @output.setter
+    def output(self, output):
+        self._output = output
+
+    def forward(self, inputs):
+        self.inputs = inputs
+        self.output = inputs
+        return self.output
+
+    def backward(self, gradient):
+        # gradient argument is gradient of next layer
+        self.d_inputs = gradient.copy()
+
+        return self.d_inputs
+
+    def get_details(self):
+        return f'Name: {self.name} || Type: Linear || Output Size: {len(self.inputs)}\n'
