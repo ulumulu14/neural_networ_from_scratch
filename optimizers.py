@@ -122,19 +122,7 @@ class RMSProp:
 
 
 class Adam:
-
-    def __init__(self, learning_rate=0.001, decay=0, epsilon=0.0000001, beta1=0.9, beta2=0.999):
-        if learning_rate < 0.:
-            raise ValueError('Learning rate cant be less than 0')
-        if decay < 0.:
-            raise ValueError('Decay cant be less than 0')
-        if epsilon <= 0.:
-            raise ValueError('Epsilon cant be lower or equal to 0')
-        if beta1 < 0.:
-            raise ValueError('beta1 cant be lower than 0')
-        if beta2 < 0.:
-            raise ValueError('beta2 cant be lower than 0')
-
+    def __init__(self, learning_rate=0.001, decay=0., epsilon=0.0000001, beta1=0.9, beta2=0.999):
         self._learning_rate = float(learning_rate)
         self._current_learning_rate = float(learning_rate)
         self._decay = float(decay)
@@ -144,31 +132,26 @@ class Adam:
         self._beta2 = float(beta2)
 
     def update_params(self, layer):
-        # Weights and biases change is lowered by previous gradients,
-        # this normalizes weight changes (per weight adaptive learning rate)
-        # betas compensate initial zeroed values of momentums and history of weights and biases
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
             layer.weights_momentums = np.zeros_like(layer.weights)
             layer.biases_momentums = np.zeros_like(layer.biases)
 
-        layer.weights_momentums = self._beta1 * layer.weights_momentums + (1+self._beta1) * layer.d_weights
-        layer.biases_momentums = self._beta1 * layer.biases_momentums + (1+self._beta1) * layer.d_biases
-        print(layer.weights_momentums)
-        weights_momentums_corrected = layer.weights_momentums / (1 - self._beta1**(self._iteration+1))
-        biases_momentums_corrected = layer.biases_momentums / (1 - self._beta1**(self._iteration+1))
+        layer.weights_momentums = self._beta1 * layer.weights_momentums + (1 - self._beta1) * layer.d_weights
+        layer.biases_momentums = self._beta1 * layer.biases_momentums + (1 - self._beta1) * layer.d_biases
 
-        layer.d_weights_history = self._beta2 * layer.d_weights_history + (1-self._beta2) * layer.d_weights**2
-        layer.d_biases_history = self._beta2 * layer.d_biases_history + (1-self._beta2) * layer.d_biases**2
+        weight_momentums_corrected = layer.weights_momentums / (1 - self._beta1 ** (self._iteration+1))
+        bias_momentums_corrected = layer.biases_momentums / (1 - self._beta1 ** (self._iteration+1))
 
-        layer.d_weights_history_corrected = layer.d_weights_history / (1 - self._beta2**(self._iteration+1))
-        layer.d_biases_history_corrected = layer.d_biases_history / (1 - self._beta2**(self._iteration+1))
+        layer.d_weights_history = self._beta2 * layer.d_weights_history + (1 - self._beta2) * layer.d_weights**2
+        layer.d_biases_history = self._beta2 * layer.d_biases_history + (1 - self._beta2) * layer.d_biases**2
 
-        layer.weights -= self._current_learning_rate * weights_momentums_corrected / \
-                         (np.sqrt(weights_momentums_corrected)+self._epsilon)
-        layer.biases -= self._current_learning_rate * biases_momentums_corrected / \
-                        (np.sqrt(biases_momentums_corrected)+self._epsilon)
+        d_weight_history_corrected = layer.d_weights_history / (1 - self._beta2 ** (self._iteration+1))
+        d_bias_history_corrected = layer.d_biases_history / (1 - self._beta2 ** (self._iteration+1))
+
+        layer.weights += -self._current_learning_rate * weight_momentums_corrected / (np.sqrt(d_weight_history_corrected) + self._epsilon)
+        layer.biases += -self._current_learning_rate * bias_momentums_corrected / (np.sqrt(d_bias_history_corrected) + self._epsilon)
 
     def update_learning_rate(self):
         # Call after updating parameters of all layers
@@ -176,4 +159,3 @@ class Adam:
             self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
 
         self._iteration += 1
-
