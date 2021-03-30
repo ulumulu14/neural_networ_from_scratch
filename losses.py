@@ -1,6 +1,5 @@
 import numpy as np
 import activations
-import layers
 
 
 class Loss:
@@ -11,6 +10,7 @@ class Loss:
     def regularization_loss(self, layer):
         # L1 and L2 regularizations are penalty for big weights and biases added to loss
         # It make model generalize better
+
         regularization_loss = 0
 
         if layer.weight_regularizer_l1 > 0:
@@ -61,12 +61,15 @@ class CategoricalCrossentropy(Loss):
         if len(y_true.shape) == 1:
             y_true = np.eye(labels)[y_true]
 
-        # Return normalized gradient
-        return (-y_true / y_pred) / n_samples
+        # Normalized gradient
+        self._d_inputs = (-y_true / y_pred) / n_samples
+
+        return self._d_inputs
 
 
 class Softmax_CategoricalCrossentropy:
     #Softmax and CategoricalCrossentropy combined for optimization purposes
+
     def __init__(self):
         self.activation = activations.Softmax()
         self.loss = CategoricalCrossentropy()
@@ -105,6 +108,41 @@ class BinaryCrossentropy(Loss):
         n_samples = len(y_pred)
         n_outputs = len(y_pred[0])
         y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
-        self._d_inputs = -(y_true / y_pred - (1-y_true) / (1-y_pred)) / n_outputs
 
-        return self._d_inputs / n_samples
+        self._d_inputs = (-(y_true / y_pred - (1-y_true) / (1-y_pred)) / n_outputs) / n_samples
+
+        return self._d_inputs
+
+
+class MSE(Loss):
+
+    def __init__(self):
+        self._d_inputs = None
+
+    def forward(self, y_pred, y_true):
+        return np.mean((y_true - y_pred)**2, axis=-1)
+
+    def backward(self, y_pred, y_true):
+        n_samples = len(y_pred)
+        n_outputs = len(y_pred[0])
+
+        self._d_inputs = (-2 * (y_true - y_pred) / n_outputs) / n_samples
+
+        return self._d_inputs
+
+
+class MAE(Loss):
+
+    def __init__(self):
+        self._d_inputs = None
+
+    def forward(self, y_true, y_pred):
+        return np.mean(np.abs(y_true - y_pred), axis=-1)
+
+    def backward(self, y_true, y_pred):
+        n_samples = len(y_true)
+        n_outputs = len(y_true[0])
+
+        self._d_inputs = (np.sign(y_true - y_pred) / n_outputs) / n_samples
+
+        return self._d_inputs

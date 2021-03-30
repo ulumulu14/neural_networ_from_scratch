@@ -20,6 +20,7 @@ class SGD:
     def update_params(self, layer):
         # Momentum is parameters change from previous iteration * self._momentum
         # Used to prevent stopping in loss function's local minimum
+
         if self._momentum:
             if layer.weights_momentums is None:
                 layer.weights_momentums = np.zeros_like(layer.weights)
@@ -38,6 +39,7 @@ class SGD:
 
     def update_learning_rate(self):
         # Call after updating parameters of all layers
+
         if self._decay:
             self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay*self._iteration))
 
@@ -63,6 +65,7 @@ class AdaGrad:
     def update_params(self, layer):
         # Weights and biases change is lowered by previous gradients,
         # this normalizes changes (per weight adaptive learning rate)
+
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
@@ -75,6 +78,7 @@ class AdaGrad:
 
     def update_learning_rate(self):
         # Call after updating parameters of all layers
+
         if self._decay:
             self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
 
@@ -103,6 +107,7 @@ class RMSProp:
     def update_params(self, layer):
         # Weights and biases change is lowered by previous gradients,
         # this normalizes changes (per weight adaptive learning rate)
+
         if layer.d_weights_history is None:
             layer.d_weights_history = np.zeros_like(layer.weights)
             layer.d_biases_history = np.zeros_like(layer.biases)
@@ -115,6 +120,7 @@ class RMSProp:
 
     def update_learning_rate(self):
         # Call after updating parameters of all layers
+
         if self._decay:
             self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
 
@@ -122,6 +128,7 @@ class RMSProp:
 
 
 class Adam:
+
     def __init__(self, learning_rate=0.001, decay=0., epsilon=0.0000001, beta1=0.9, beta2=0.999):
         self._learning_rate = float(learning_rate)
         self._current_learning_rate = float(learning_rate)
@@ -157,6 +164,7 @@ class Adam:
 
     def update_learning_rate(self):
         # Call after updating parameters of all layers
+
         if self._decay:
             self._current_learning_rate = self._learning_rate * (1. / (1. + self._decay * self._iteration))
 

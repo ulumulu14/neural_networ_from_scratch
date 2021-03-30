@@ -51,12 +51,15 @@ class Dense(Layer):
         self._d_inputs = None
         self._d_weights = None
         self._d_biases = None
+
         # For SGD with momentum
         self.weights_momentums = None
         self.biases_momentums = None
+
         # For AdaGrad, RMSProp, holds previous gradients squared
         self.d_weights_history = None
         self.d_biases_history = None
+
         # Regularization parameters
         self.weight_regularizer_l1 = weight_regularizer_l1
         self.bias_regularizer_l1 = bias_regularizer_l1
@@ -155,14 +158,34 @@ class Dropout(Layer):
         self._inputs = None
         self._binary_mask = None
 
-    def forward(self, inputs):
-        self._inputs = inputs
-        self._binary_mask = np.random.binomial(1, self._rate, size=self._inputs.shape) / self._rate
+    @property
+    def inputs(self):
+        if self._inputs is None:
+            raise ValueError('inputs is None')
 
-        return self._inputs * self._binary_mask
+        return self._inputs
+
+    @property
+    def binary_mask(self):
+        if self._binary_mask is None:
+            raise ValueError('binary mask is None')
+
+    @inputs.setter
+    def inputs(self, inputs):
+        self._inputs = inputs
+
+    @binary_mask.setter
+    def binary_mask(self, binary_mask):
+        self._binary_mask = binary_mask
+
+    def forward(self, inputs):
+        self.inputs = inputs
+        self.binary_mask = np.random.binomial(1, self._rate, size=self.inputs.shape) / self._rate
+
+        return self.inputs * self.binary_mask
 
     def backward(self, d_inputs):
-        return d_inputs * self._binary_mask
+        return d_inputs * self.binary_mask
 
     def get_details(self):
-        return f'Name: {self.name} || Type: Dense || Output Size: {len(self._inputs)}\n'
+        return f'Name: {self.name} || Type: Dense || Output Size: {len(self.inputs)}\n'

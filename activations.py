@@ -4,7 +4,7 @@ import layers
 
 class ReLU(layers.Layer):
 
-    def __init__(self, name):
+    def __init__(self, name=None):
         super(ReLU, self).__init__(name=name)
         self._inputs = None
         self._d_inputs = None
@@ -38,6 +38,7 @@ class ReLU(layers.Layer):
 
     def backward(self, gradient):
         # gradient argument is gradient of next layer
+
         self.d_inputs = gradient.copy()
         # Gradient w.r.t inputs
         self.d_inputs[self.inputs <= 0] = 0
@@ -98,6 +99,7 @@ class Softmax(layers.Layer):
 
     def backward(self, gradient):
         # gradient argument is gradient of next layer
+
         self.d_inputs = np.empty_like(gradient)
 
         for i, (single_output, partial_deriv) in enumerate(zip(self.output, gradient)):
@@ -160,6 +162,7 @@ class Sigmoid(layers.Layer):
 
     def backward(self, gradient):
         # gradient argument is gradient of next layer
+
         self.d_inputs = gradient * (1-self.output) * self.output
 
         return self.d_inputs
@@ -170,7 +173,7 @@ class Sigmoid(layers.Layer):
 
 class Linear(layers.Layer):
 
-    def __init__(self, name):
+    def __init__(self, name=None):
         super().__init__(name=name)
         self._inputs = None
         self._d_inputs = None
@@ -216,6 +219,7 @@ class Linear(layers.Layer):
 
     def backward(self, gradient):
         # gradient argument is gradient of next layer
+
         self.d_inputs = gradient.copy()
 
         return self.d_inputs
