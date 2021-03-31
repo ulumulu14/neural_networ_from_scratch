@@ -9,7 +9,7 @@ class Loss:
 
     def regularization_loss(self, layer):
         # L1 and L2 regularizations are penalty for big weights and biases added to loss
-        # It make model generalize better
+        # It makes model generalize better
 
         regularization_loss = 0
 

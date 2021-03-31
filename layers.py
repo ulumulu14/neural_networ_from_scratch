@@ -171,6 +171,8 @@ class Dropout(Layer):
         if self._binary_mask is None:
             raise ValueError('binary mask is None')
 
+        return self._binary_mask
+
     @inputs.setter
     def inputs(self, inputs):
         self._inputs = inputs
@@ -186,7 +188,7 @@ class Dropout(Layer):
             return self.inputs
 
         self.binary_mask = np.random.binomial(1, self._rate, size=self.inputs.shape) / self._rate
-        print(self.binary_mask)
+        
         return self.inputs * self.binary_mask
 
     def backward(self, d_inputs):

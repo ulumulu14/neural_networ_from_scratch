@@ -40,6 +40,7 @@ class ReLU(layers.Layer):
         # gradient argument is gradient of next layer
 
         self.d_inputs = gradient.copy()
+
         # Gradient w.r.t inputs
         self.d_inputs[self.inputs <= 0] = 0
 
@@ -105,10 +106,14 @@ class Softmax(layers.Layer):
         for i, (single_output, partial_deriv) in enumerate(zip(self.output, gradient)):
             single_output = single_output.reshape(-1, 1)
             jacobian = np.diagflat(single_output) - np.dot(single_output, single_output.T)
+
             # Calculate sample-wise gradient w.r.t inputs
             self.d_inputs[i] = np.dot(jacobian, partial_deriv)
 
         return self.d_inputs
+
+    def predictions(self, outputs):
+        return np.argmax(outputs, axis=1)
 
     def get_details(self):
         return f'Name: {self.name} || Type: Softmax || Output Size: {len(self.inputs)}\n'
@@ -167,6 +172,9 @@ class Sigmoid(layers.Layer):
 
         return self.d_inputs
 
+    def predictions(self, outputs):
+        return (outputs > 0.5) * 1
+
     def get_details(self):
         return f'Name: {self.name} || Type: Sigmoid || Output Size: {len(self.inputs)}\n'
 
@@ -223,6 +231,9 @@ class Linear(layers.Layer):
         self.d_inputs = gradient.copy()
 
         return self.d_inputs
+
+    def predictions(self, outputs):
+        return outputs
 
     def get_details(self):
         return f'Name: {self.name} || Type: Linear || Output Size: {len(self.inputs)}\n'
