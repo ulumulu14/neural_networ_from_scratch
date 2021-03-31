@@ -5,7 +5,7 @@ import layers
 class ReLU(layers.Layer):
 
     def __init__(self, name=None):
-        super(ReLU, self).__init__(name=name)
+        super(ReLU, self).__init__(trainable=False, name=name)
         self._inputs = None
         self._d_inputs = None
 
@@ -31,7 +31,7 @@ class ReLU(layers.Layer):
     def d_inputs(self, d_inputs):
         self._d_inputs = d_inputs
 
-    def forward(self, inputs):
+    def forward(self, inputs, training=True):
         self.inputs = inputs
 
         return np.maximum(0, self.inputs)
@@ -51,8 +51,8 @@ class ReLU(layers.Layer):
 
 class Softmax(layers.Layer):
 
-    def __init__(self, name):
-        super(Softmax, self).__init__(name=name)
+    def __init__(self, name=None):
+        super(Softmax, self).__init__(trainable=False, name=name)
         self._inputs = None
         self._d_inputs = None
         self._output = None
@@ -90,7 +90,7 @@ class Softmax(layers.Layer):
     def output(self, output):
         self._output = output
 
-    def forward(self, inputs):
+    def forward(self, inputs, training=True):
         self.inputs = inputs
         exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
         self.output = exp_values / np.sum(exp_values, axis=1, keepdims=True)
@@ -117,7 +117,7 @@ class Softmax(layers.Layer):
 class Sigmoid(layers.Layer):
 
     def __init__(self, name=None):
-        super().__init__(name=name)
+        super().__init__(trainable=False, name=name)
         self._inputs = None
         self._d_inputs = None
         self._output = None
@@ -155,7 +155,7 @@ class Sigmoid(layers.Layer):
     def output(self, output):
         self._output = output
 
-    def forward(self, inputs):
+    def forward(self, inputs, training=True):
         self.inputs = inputs
         self.output = 1 / (1 + np.exp(-self._inputs))
         return self.output
@@ -174,7 +174,7 @@ class Sigmoid(layers.Layer):
 class Linear(layers.Layer):
 
     def __init__(self, name=None):
-        super().__init__(name=name)
+        super().__init__(trainable=False, name=name)
         self._inputs = None
         self._d_inputs = None
         self._output = None
@@ -212,7 +212,7 @@ class Linear(layers.Layer):
     def output(self, output):
         self._output = output
 
-    def forward(self, inputs):
+    def forward(self, inputs, training=True):
         self.inputs = inputs
         self.output = inputs
         return self.output

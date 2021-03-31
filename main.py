@@ -72,7 +72,6 @@ if __name__ == "__main__":
     val_acc = np.mean(predictions == y_test)
 
     print(f'val_acc: {val_acc} || val_loss: {val_loss}')
-    '''''
 
     # Regression
     X, y = sine_data()
@@ -137,3 +136,20 @@ if __name__ == "__main__":
     plt.plot(X_test, y_test)
     plt.plot(X_test, predictions)
     plt.show()
+
+'''''
+
+    X_train, y_train = spiral_data(samples=100, classes=3)
+    X_val, y_val = spiral_data(samples=100, classes=3)
+
+    model = network.NeuralNetwork()
+
+    model.add_layer(layers.Dense(2, 64))
+    model.add_layer(activations.ReLU())
+    model.add_layer(layers.Dropout(rate=0.2))
+    model.add_layer(layers.Dense(64, 3))
+    model.add_layer(activations.Softmax())
+
+    model.set(loss=losses.CategoricalCrossentropy(), optimizier=optimizers.Adam())
+
+    model.fit(X_train, y_train, epochs=EPOCHS, validation_data=(X_val, y_val))

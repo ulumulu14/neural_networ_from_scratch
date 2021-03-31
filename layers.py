@@ -5,8 +5,9 @@ from abc import abstractmethod
 
 class Layer(ABC):
 
-    def __init__(self, name=None):
+    def __init__(self, trainable, name=None):
         self.name = name
+        self.trainable = trainable
 
     @abstractmethod
     def forward(self, inputs):
@@ -24,7 +25,7 @@ class Layer(ABC):
 class Dense(Layer):
 
     def __init__(self, input_size, n_neurons, name=None, weight_regularizer_l1=0, bias_regularizer_l1=0,
-                 weight_regularizer_l2=0, bias_regularizer_l2=0):
+                 weight_regularizer_l2=0, bias_regularizer_l2=0, trainable=True):
         if not isinstance(input_size, int):
             raise TypeError('Input size must be an integer')
         if not isinstance(n_neurons, int):
@@ -42,7 +43,7 @@ class Dense(Layer):
         if bias_regularizer_l2 < 0:
             raise ValueError('Bias regularizer l2 cant be less than 0')
 
-        super(Dense, self).__init__(name=name)
+        super(Dense, self).__init__(trainable=trainable, name=name)
         self.n_neurons = n_neurons
         self.input_size = input_size
         self.weights = 0.1 * np.random.randn(input_size, n_neurons)
@@ -109,7 +110,7 @@ class Dense(Layer):
     def d_biases(self, d_biases):
         self._d_biases = d_biases
 
-    def forward(self, inputs):
+    def forward(self, inputs, training=True):
         self.inputs = np.array(inputs)
 
         return np.dot(self.inputs, self.weights) + self.biases
@@ -153,7 +154,7 @@ class Dropout(Layer):
         if 0 > rate > 1:
             raise ValueError('Rate value must be (0, 1)')
 
-        super(Dropout, self).__init__(name=name)
+        super(Dropout, self).__init__(trainable=False, name=name)
         self._rate = 1 - rate
         self._inputs = None
         self._binary_mask = None
@@ -178,10 +179,14 @@ class Dropout(Layer):
     def binary_mask(self, binary_mask):
         self._binary_mask = binary_mask
 
-    def forward(self, inputs):
+    def forward(self, inputs, training=True):
         self.inputs = inputs
-        self.binary_mask = np.random.binomial(1, self._rate, size=self.inputs.shape) / self._rate
 
+        if not training:
+            return self.inputs
+
+        self.binary_mask = np.random.binomial(1, self._rate, size=self.inputs.shape) / self._rate
+        print(self.binary_mask)
         return self.inputs * self.binary_mask
 
     def backward(self, d_inputs):
